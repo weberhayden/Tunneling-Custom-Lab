@@ -1,0 +1,13 @@
+# robots.txt — NovaTech Solutions
+# https://www.novatech-solutions.io/robots.txt
+
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /about.html
+Allow: /contact.html
+
+# Internal systems — do not index
+Disallow: /internal-portal.html
+
+# Generated: 2026-01-03 | Review quarterly

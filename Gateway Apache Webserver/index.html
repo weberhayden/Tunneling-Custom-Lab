@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NovaTech Solutions – Enterprise Cloud Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --surface: #111827;
+      --border: #1e2d45;
+      --accent: #00c8ff;
+      --accent2: #7c3aed;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --glow: rgba(0,200,255,0.15);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(10,14,23,0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
+    .logo span { color: var(--accent); }
+    nav ul { display: flex; gap: 2.5rem; list-style: none; }
+    nav a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    nav a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent); color: #000; padding: 0.5rem 1.4rem;
+      border-radius: 4px; font-weight: 600; font-size: 0.85rem;
+    }
+    .nav-cta:hover { background: #33d4ff; color: #000 !important; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      flex-direction: column; text-align: center; padding: 8rem 2rem 4rem;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(0,200,255,0.08), transparent 70%),
+                  radial-gradient(ellipse 60% 40% at 80% 70%, rgba(124,58,237,0.07), transparent 60%);
+    }
+    .hero-badge {
+      display: inline-block; background: rgba(0,200,255,0.1); border: 1px solid rgba(0,200,255,0.3);
+      color: var(--accent); padding: 0.35rem 1rem; border-radius: 100px;
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 2rem; animation: fadeUp 0.6s ease both;
+    }
+    h1 {
+      font-family: 'Syne', sans-serif; font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 800; line-height: 1.05; letter-spacing: -0.03em;
+      max-width: 900px; margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    h1 em { color: var(--accent); font-style: normal; }
+    .hero-sub {
+      color: var(--muted); font-size: 1.1rem; max-width: 560px; line-height: 1.7;
+      margin-bottom: 2.5rem; animation: fadeUp 0.6s 0.2s ease both;
+    }
+    .hero-btns { display: flex; gap: 1rem; animation: fadeUp 0.6s 0.3s ease both; }
+    .btn-primary {
+      background: var(--accent); color: #000; padding: 0.8rem 2rem;
+      border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 0.95rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 20px rgba(0,200,255,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,200,255,0.5); }
+    .btn-secondary {
+      border: 1px solid var(--border); color: var(--text); padding: 0.8rem 2rem;
+      border-radius: 6px; font-weight: 500; text-decoration: none; font-size: 0.95rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); background: var(--glow); }
+
+    /* STATS */
+    .stats {
+      display: flex; justify-content: center; gap: 4rem;
+      padding: 3rem 2rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; color: var(--accent); }
+    .stat-label { font-size: 0.82rem; color: var(--muted); margin-top: 0.3rem; letter-spacing: 0.05em; text-transform: uppercase; }
+
+    /* FEATURES */
+    .section { padding: 6rem 4rem; max-width: 1200px; margin: 0 auto; }
+    .section-label { color: var(--accent); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1rem; }
+    .section-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; }
+    .section-sub { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 520px; margin-bottom: 3rem; }
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .feature-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .feature-icon { font-size: 1.6rem; margin-bottom: 1rem; }
+    .feature-card h3 { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; }
+    .feature-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border); padding: 2.5rem 4rem;
+      display: flex; justify-content: space-between; align-items: center;
+      color: var(--muted); font-size: 0.82rem;
+    }
+    footer a { color: var(--muted); text-decoration: none; margin-left: 1.5rem; }
+    footer a:hover { color: var(--text); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">Nova<span>Tech</span></div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <a href="#" class="nav-cta">Get Started</a>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">⚡ Now serving 10,000+ enterprises globally</div>
+    <h1>Infrastructure Built for the <em>Future of Work</em></h1>
+    <p class="hero-sub">NovaTech Solutions delivers enterprise-grade cloud infrastructure, zero-trust security, and intelligent automation — all from a single platform.</p>
+    <div class="hero-btns">
+      <a href="#" class="btn-primary">Start Free Trial</a>
+      <a href="about.html" class="btn-secondary">Learn More →</a>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat-item"><div class="stat-num">99.99%</div><div class="stat-label">Uptime SLA</div></div>
+    <div class="stat-item"><div class="stat-num">10K+</div><div class="stat-label">Clients</div></div>
+    <div class="stat-item"><div class="stat-num">140ms</div><div class="stat-label">Avg. Latency</div></div>
+    <div class="stat-item"><div class="stat-num">SOC2</div><div class="stat-label">Certified</div></div>
+  </div>
+
+  <div class="section">
+    <p class="section-label">Platform Features</p>
+    <h2 class="section-title">Everything your team needs</h2>
+    <p class="section-sub">From compute to compliance, NovaTech gives you the tools to build, scale, and secure your operations.</p>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">☁️</div><h3>Auto-Scaling Compute</h3><p>Elastic resources that grow with your workload. No over-provisioning, no surprise bills.</p></div>
+      <div class="feature-card"><div class="feature-icon">🔒</div><h3>Zero-Trust Security</h3><p>Identity-first architecture with continuous verification at every layer of the stack.</p></div>
+      <div class="feature-card"><div class="feature-icon">📊</div><h3>Unified Observability</h3><p>Logs, metrics, and traces in one place. Detect anomalies before they become incidents.</p></div>
+      <div class="feature-card"><div class="feature-icon">⚙️</div><h3>GitOps-Ready</h3><p>Deploy from your repository with native CI/CD integrations and rollback controls.</p></div>
+      <div class="feature-card"><div class="feature-icon">🌐</div><h3>Global Edge Network</h3><p>42 PoPs across 6 continents. Your users get low-latency access wherever they are.</p></div>
+      <div class="feature-card"><div class="feature-icon">🤖</div><h3>AI-Powered Ops</h3><p>Predictive autoscaling, anomaly detection, and cost optimizations driven by ML.</p></div>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2026 NovaTech Solutions, Inc. All rights reserved.</span>
+
+  </footer>
+</body>
+</html>

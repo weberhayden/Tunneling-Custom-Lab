@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NovaTech – Internal Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #080d0a; --surface: #0e1510; --border: #1a2e1f;
+      --accent: #22c55e; --text: #d1fae5; --muted: #4b7a57;
+      --dim: #1e3a27;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh; padding: 3rem 2rem;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .terminal {
+      width: 100%; max-width: 860px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 0 60px rgba(34,197,94,0.05);
+    }
+    .terminal-bar {
+      background: var(--dim); padding: 0.75rem 1.2rem;
+      display: flex; align-items: center; gap: 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .terminal-title { color: var(--muted); font-size: 0.78rem; margin-left: auto; margin-right: auto; }
+    .terminal-body { padding: 2rem 2.5rem; }
+    .line { margin-bottom: 0.5rem; font-size: 0.88rem; line-height: 1.6; }
+    .prompt { color: var(--accent); }
+    .cmd { color: #fff; }
+    .out { color: #a7f3d0; }
+    .warn { color: #fbbf24; }
+    .meta { margin-top: 2rem; max-width: 860px; width: 100%; color: var(--muted); font-size: 0.75rem; line-height: 1.8; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .cursor { animation: blink 1s step-end infinite; color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!--
+    ~~~~ NOVATECH INTERNAL SYSTEMS ~~~~
+    auth_store v2.1 | DO NOT CACHE | INTERNAL USE ONLY
+
+    [credentials]
+	arthur:2aa7bde7159defd25e2bc1a4cd5f4b51e13d5579
+	dutch:fdc01cfa3b97b2e6820be41a9f4a0d0a29dca007
+	trelawney:c8b347a32facbe02c2688c304b18e03eb25fcddf
+	john:ebf777d266a403175d74af2bc5f34ff5872666e8
+	morgan:f045e5e1b7195bc19bfd3026c044d93bb5048018
+	micah:0cc2497792b0fb6344dd03f0dd8fa27a759304cf
+  -->
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+      <span class="terminal-title">novatech-internal &mdash; bash &mdash; 80x24</span>
+    </div>
+    <div class="terminal-body">
+      <div class="line"><span class="prompt">admin@nt-prod-01:~$</span> <span class="cmd">cat /etc/banner</span></div>
+      <div class="line out">+------------------------------------------+</div>
+      <div class="line out">|   NovaTech Internal Systems Portal v2.1  |</div>
+      <div class="line out">|   AUTHORIZED ACCESS ONLY                 |</div>
+      <div class="line out">+------------------------------------------+</div>
+      <br/>
+      <div class="line"><span class="prompt">admin@nt-prod-01:~$</span> <span class="cmd">uptime</span></div>
+      <div class="line out">&nbsp;14:32:07 up 412 days, 3:17, 2 users, load average: 0.12, 0.08, 0.05</div>
+      <br/>
+      <div class="line"><span class="prompt">admin@nt-prod-01:~$</span> <span class="cmd">ls -la /var/config/</span></div>
+      <div class="line out">drwxr-x---  2 root   admin   4096 Apr 18 09:12 .</div>
+      <div class="line out">drwxr-xr-x 14 root   root    4096 Jan 03 00:00 ..</div>
+      <div class="line out">-rw-r-----  1 root   admin    512 Apr 18 09:12 auth_store.cfg</div>
+      <div class="line out">-rw-r-----  1 root   admin   1024 Apr 12 14:55 db.conf</div>
+      <div class="line out">-rw-r-----  1 root   admin    256 Mar 29 08:30 api_keys.cfg</div>
+      <br/>
+      <div class="line"><span class="prompt">admin@nt-prod-01:~$</span> <span class="cmd">systemctl status nt-auth</span></div>
+      <div class="line out">&#x25CF; nt-auth.service - NovaTech Authentication Service</div>
+      <div class="line out">&nbsp;&nbsp;&nbsp;&nbsp; Loaded: loaded (/lib/systemd/system/nt-auth.service; enabled)</div>
+      <div class="line out">&nbsp;&nbsp;&nbsp;&nbsp; Active: <span style="color:var(--accent)">active (running)</span> since Fri 2026-01-03 00:00:01 UTC</div>
+      <div class="line out">&nbsp;&nbsp; Main PID: 1042 (nt-auth)</div>
+      <br/>
+      <div class="line warn">[WARNING] Credential rotation overdue &mdash; last rotated 2025-10-01</div>
+      <div class="line warn">[WARNING] auth_store.cfg read permissions too broad (see audit log)</div>
+      <br/>
+      <div class="line"><span class="prompt">admin@nt-prod-01:~$</span> <span class="cursor">&#x2588;</span></div>
+    </div>
+  </div>
+
+  <div class="meta">
+    <p><b>REMEMBER TO REMOVE HARDCODED CREDENTIALS, THESE ARE A SECURITY RISK !!!</p>
+  </div>
+  
+<!-- dGhlIGNyZWRlbnRpYWxzIGFyZSBzaGEx -->
+</body>
+</html>
