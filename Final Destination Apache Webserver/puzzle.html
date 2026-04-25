@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTF Puzzle — ACCESS DENIED</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --pink: #ff6eb4;
+  --pink-bright: #ff2d9b;
+  --pink-pale: #ffd6ec;
+  --pink-glow: rgba(255,110,180,0.18);
+  --bg: #0d0009;
+  --bg2: #150010;
+  --bg3: #1c0018;
+  --text: #ffd6ec;
+  --text-dim: #9a5070;
+  --red: #ff4466;
+  --border: rgba(255,110,180,0.25);
+  --mono: 'Share Tech Mono', monospace;
+  --display: 'Orbitron', monospace;
+}
+
+html { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scanlines */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Vignette */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.75) 100%);
+  pointer-events: none;
+  z-index: 999;
+}
+
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,110,180,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,110,180,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 0;
+}
+
+.wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 3rem 2rem 5rem;
+}
+
+/* ── Header ── */
+.site-header { text-align: center; margin-bottom: 3rem; }
+
+.skull {
+  font-size: 52px;
+  display: block;
+  margin-bottom: 1rem;
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 8px var(--pink)); }
+  50%       { filter: drop-shadow(0 0 28px var(--pink-bright)) drop-shadow(0 0 6px #fff); }
+}
+
+.site-title {
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 5vw, 2.2rem);
+  font-weight: 900;
+  color: var(--pink);
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 24px rgba(255,45,155,0.4), 0 0 60px rgba(255,45,155,0.15);
+  margin-bottom: 0.4rem;
+}
+
+.site-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+/* ── Progress ── */
+.progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2.5rem;
+}
+
+.progress-step {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,110,180,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-step::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--pink-bright), var(--pink));
+  transform: translateX(-100%);
+  transition: transform 0.55s ease;
+}
+
+.progress-step.active::after  { animation: prog-shimmer 1.8s ease-in-out infinite; }
+.progress-step.done::after    { transform: translateX(0); }
+
+@keyframes prog-shimmer {
+  0%   { transform: translateX(-80%); opacity: 0.6; }
+  50%  { opacity: 1; }
+  100% { transform: translateX(-10%); opacity: 0.6; }
+}
+
+.progress-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* ── Stage cards ── */
+.stage       { display: none; }
+.stage.active { display: block; animation: stage-in 0.4s ease; }
+
+@keyframes stage-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* top shimmer line */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--pink), transparent);
+  opacity: 0.5;
+}
+
+.stage-badge {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--pink);
+  background: rgba(255,110,180,0.08);
+  border: 1px solid rgba(255,110,180,0.25);
+  border-radius: 4px;
+  padding: 3px 10px;
+  display: inline-block;
+  margin-bottom: 1.2rem;
+  text-transform: uppercase;
+}
+
+.stage-title {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--pink-pale);
+  margin-bottom: 1.1rem;
+  letter-spacing: 0.05em;
+}
+
+/* ── Terminal block ── */
+.terminal {
+  background: #0a0008;
+  border: 1px solid rgba(255,110,180,0.18);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--pink);
+  line-height: 1.9;
+  margin-bottom: 1.2rem;
+  text-shadow: 0 0 8px rgba(255,110,180,0.45);
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+/* ── Clue ── */
+.clue {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin-bottom: 1.2rem;
+  padding-left: 0.85rem;
+  border-left: 2px solid rgba(255,110,180,0.22);
+}
+.clue em { color: var(--pink-pale); font-style: normal; }
+
+/* ── Input row ── */
+.input-row { display: flex; gap: 8px; }
+
+.input-row input {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid rgba(255,110,180,0.22);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--pink-pale);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-row input::placeholder { color: var(--text-dim); opacity: 0.55; }
+.input-row input:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 3px rgba(255,110,180,0.1);
+}
+.input-row input.shake {
+  animation: shake 0.35s ease;
+  border-color: var(--red) !important;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+.btn {
+  background: linear-gradient(135deg, var(--pink-bright), var(--pink));
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-family: var(--display);
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 0 14px rgba(255,45,155,0.3);
+  transition: box-shadow 0.2s, transform 0.1s, opacity 0.15s;
+}
+.btn:hover  { box-shadow: 0 0 22px rgba(255,45,155,0.55); opacity: 0.9; }
+.btn:active { transform: scale(0.97); }
+
+.error-msg {
+  font-size: 12px;
+  color: var(--red);
+  min-height: 20px;
+  margin-top: 8px;
+  letter-spacing: 0.04em;
+}
+.error-msg:not(:empty)::before { content: '// '; opacity: 0.5; }
+
+/* ── Hint ── */
+.hint-row    { margin-top: 10px; }
+.hint-toggle {
+  font-size: 11px;
+  color: var(--text-dim);
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  user-select: none;
+  transition: color 0.2s;
+}
+.hint-toggle:hover { color: var(--pink); }
+.hint-text {
+  display: none;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-dim);
+  background: rgba(255,110,180,0.05);
+  border: 1px solid rgba(255,110,180,0.1);
+  border-radius: 6px;
+  padding: 8px 12px;
+  line-height: 1.65;
+}
+.hint-text.show { display: block; }
+
+/* ── Win screen ── */
+#stage-win { text-align: center; padding: 2rem 0; }
+
+.win-icon {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 1.5rem;
+  animation: win-pop 0.6s ease, glow-pulse 2.5s ease-in-out 0.6s infinite;
+}
+@keyframes win-pop {
+  from { transform: scale(0.3) rotate(-15deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.win-title {
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 5vw, 2.1rem);
+  font-weight: 900;
+  color: var(--pink);
+  text-shadow: 0 0 30px rgba(255,45,155,0.5);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.12em;
+}
+
+.win-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 2rem;
+  line-height: 1.7;
+}
+
+.flag-box {
+  display: inline-block;
+  background: #10000c;
+  border: 1px solid var(--pink);
+  border-radius: 10px;
+  padding: 1.2rem 2.5rem;
+  font-family: var(--mono);
+  font-size: clamp(14px, 3vw, 18px);
+  color: var(--pink-bright);
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 16px rgba(255,45,155,0.6);
+  box-shadow: 0 0 32px rgba(255,45,155,0.15), inset 0 0 30px rgba(255,45,155,0.04);
+  position: relative;
+  overflow: hidden;
+  word-break: break-all;
+}
+.flag-box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,45,155,0.1), transparent);
+  animation: flag-sweep 2.5s ease-in-out infinite;
+}
+@keyframes flag-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ── Floating particles ── */
+.particles { position: fixed; inset: 0; pointer-events: none; z-index: 5; }
+.particle {
+  position: absolute;
+  background: var(--pink);
+  border-radius: 50%;
+  opacity: 0;
+  animation: particle-rise linear infinite;
+}
+@keyframes particle-rise {
+  0%   { transform: translateY(100vh); opacity: 0; }
+  8%   { opacity: 0.35; }
+  92%  { opacity: 0.15; }
+  100% { transform: translateY(-8vh); opacity: 0; }
+}
+
+@media (max-width: 500px) {
+  .wrap { padding: 1.5rem 1rem 4rem; }
+  .card { padding: 1.25rem; }
+  .terminal { font-size: 12px; }
+  .flag-box { padding: 1rem 1.25rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="particles" id="particles"></div>
+
+<div class="wrap">
+
+  <header class="site-header">
+    <span class="skull">&#x1F480;</span>
+    <h1 class="site-title">CAPTURE THE FLAG</h1>
+    <p class="site-sub">Solve all 3 stages to unlock the flag</p>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-step active" id="ps0"></div>
+    <div class="progress-step" id="ps1"></div>
+    <div class="progress-step" id="ps2"></div>
+    <span class="progress-label" id="plabel">0 / 3 complete</span>
+  </div>
+
+  <!-- Stage 1: Binary -->
+  <div class="stage active" id="stage-0">
+    <div class="card">
+      <span class="stage-badge">Stage 01 &mdash; Binary Decode</span>
+      <h2 class="stage-title">What does this say?</h2>
+      <div class="terminal">01110111 01100101 01101100 01100011 01101111 01101101 01100101</div>
+      <p class="clue">Each group of 8 bits is one ASCII character. Decode all 7 bytes and enter the <em>English word</em> they spell.</p>
+      <div class="input-row">
+        <input type="text" id="in0" placeholder="decoded word..." autocomplete="off" spellcheck="false" />
+        <button class="btn" onclick="check(0)">SUBMIT</button>
+      </div>
+      <div class="error-msg" id="err0"></div>
+      <div class="hint-row">
+        <span class="hint-toggle" onclick="toggleHint(0)">[ show hint ]</span>
+        <div class="hint-text" id="hint0">Convert each 8-bit group from binary to decimal, then match it to an ASCII character.<br>Example: 01110111 = 64+32+16+8+4+2+1 = 119 = the letter 'w'</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stage 2: Caesar -->
+  <div class="stage" id="stage-1">
+    <div class="card">
+      <span class="stage-badge">Stage 02 &mdash; Caesar Cipher</span>
+      <h2 class="stage-title">Crack the cipher</h2>
+      <div class="terminal">SLQNZRUOG</div>
+      <p class="clue">This was encrypted with a <em>Caesar cipher</em>. The shift equals the <em>total number of stages</em> in this puzzle. Decode and enter the plaintext.</p>
+      <div class="input-row">
+        <input type="text" id="in1" placeholder="decoded text..." autocomplete="off" spellcheck="false" />
+        <button class="btn" onclick="check(1)">SUBMIT</button>
+      </div>
+      <div class="error-msg" id="err1"></div>
+      <div class="hint-row">
+        <span class="hint-toggle" onclick="toggleHint(1)">[ show hint ]</span>
+        <div class="hint-text" id="hint1">Number of stages = 3, so shift each letter <em>back</em> by 3.<br>'S' &rarr; 'P', 'L' &rarr; 'I', 'Q' &rarr; 'N' ...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stage 3: Riddle -->
+  <div class="stage" id="stage-2">
+    <div class="card">
+      <span class="stage-badge">Stage 03 &mdash; Logic Riddle</span>
+      <h2 class="stage-title">Solve the riddle</h2>
+      <div class="terminal">I speak without a mouth
+and hear without ears.
+I have no body,
+but I come alive with wind.
+
+What am I?</div>
+      <p class="clue">Enter the answer — <em>one word</em> only.</p>
+      <div class="input-row">
+        <input type="text" id="in2" placeholder="one word..." autocomplete="off" spellcheck="false" />
+        <button class="btn" onclick="check(2)">SUBMIT</button>
+      </div>
+      <div class="error-msg" id="err2"></div>
+      <div class="hint-row">
+        <span class="hint-toggle" onclick="toggleHint(2)">[ show hint ]</span>
+        <div class="hint-text" id="hint2">Think of something that bounces off canyon walls and mountain cliffs. It repeats your words back, but owns no voice.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Win -->
+  <div class="stage" id="stage-win">
+    <span class="win-icon">&#x1F3C6;</span>
+    <h2 class="win-title">ACCESS GRANTED</h2>
+    <p class="win-sub">Binary decoded. Cipher cracked. Riddle solved.<br>Here is your flag:</p>
+    <div class="flag-box">flag{th4t_w4s_3asy}</div>
+  </div>
+
+</div>
+
+<script>
+const allAnswers = [
+  ["welcome"],
+  ["pinkworld", "pink world"],
+  ["echo"]
+];
+
+let completed = 0;
+
+function norm(s) { return s.trim().toLowerCase().replace(/\s+/g,''); }
+
+function check(stage) {
+  const inp = document.getElementById('in' + stage);
+  const err = document.getElementById('err' + stage);
+  const val = norm(inp.value);
+
+  if (!val) { err.textContent = 'enter an answer first'; return; }
+
+  const ok = allAnswers[stage].some(a => norm(a) === val);
+
+  if (!ok) {
+    err.textContent = 'incorrect — try again';
+    inp.classList.remove('shake');
+    void inp.offsetWidth;
+    inp.classList.add('shake');
+    setTimeout(() => inp.classList.remove('shake'), 400);
+    return;
+  }
+
+  err.textContent = '';
+  completed++;
+
+  const ps = document.getElementById('ps' + stage);
+  ps.classList.remove('active');
+  ps.classList.add('done');
+  document.getElementById('plabel').textContent = completed + ' / 3 complete';
+
+  document.getElementById('stage-' + stage).classList.remove('active');
+
+  const next = stage + 1;
+  if (next < 3) {
+    document.getElementById('ps' + next).classList.add('active');
+    document.getElementById('stage-' + next).classList.add('active');
+  } else {
+    document.getElementById('stage-win').classList.add('active');
+    confettiBurst();
+  }
+}
+
+function toggleHint(stage) {
+  const h = document.getElementById('hint' + stage);
+  const t = h.previousElementSibling;
+  h.classList.toggle('show');
+  t.textContent = h.classList.contains('show') ? '[ hide hint ]' : '[ show hint ]';
+}
+
+document.querySelectorAll('input').forEach((inp, i) => {
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(i); });
+});
+
+// Particles
+(function() {
+  const c = document.getElementById('particles');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const sz = 1 + Math.random() * 2;
+    p.style.cssText = `left:${Math.random()*100}vw;width:${sz}px;height:${sz}px;animation-duration:${9+Math.random()*14}s;animation-delay:${Math.random()*16}s;`;
+    c.appendChild(p);
+  }
+})();
+
+// Confetti on win
+function confettiBurst() {
+  const cols = ['#ff6eb4','#ff2d9b','#ffd6ec','#ff99cc','#ff44aa','#ffbbdd'];
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes cf {
+      0%   { transform:translate(0,0) rotate(0deg); opacity:1; }
+      100% { transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0; }
+    }`;
+  document.head.appendChild(style);
+
+  for (let i = 0; i < 70; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      const tx = (Math.random() > 0.5 ? 1 : -1) * (30 + Math.random() * 100);
+      const ty = -(80 + Math.random() * 220);
+      const r  = (360 + Math.random() * 360) + 'deg';
+      el.style.cssText = `
+        position:fixed;
+        left:${25+Math.random()*50}vw;
+        top:65vh;
+        width:${4+Math.random()*6}px;
+        height:${4+Math.random()*6}px;
+        background:${cols[Math.floor(Math.random()*cols.length)]};
+        border-radius:${Math.random()>.5?'50%':'2px'};
+        pointer-events:none;
+        z-index:2000;
+        --tx:${tx}px;--ty:${ty}px;--r:${r};
+        animation:cf ${1+Math.random()*1.5}s ease-out forwards;`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2600);
+    }, i * 25);
+  }
+}
+</script>
+</body>
+</html>
