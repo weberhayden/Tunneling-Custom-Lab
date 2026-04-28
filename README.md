@@ -14,6 +14,7 @@ This can be found within the Network Configuration directory.
 This is an in-depth network map created with draw.io. It's located in the Network Configuration directory.
 This diagram is by far the simplest way to view and understand how the entire network is laid out spatially.
 
+------------------------------------------------------------------------------------------------------------------------------------------
 
 # Supplementary Materials
 
