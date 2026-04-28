@@ -10,6 +10,19 @@ This document outlines the virtual network setup within VMware Workstation Pro.
 This includes every VMnet used in the lab as well as the configuration of the seven included virtual machines.
 This can be found within the Network Configuration directory.
 
-## Network Diagram.html
-This is an in-depth network map created with draw.io.
+## Network Diagram.pdf
+This is an in-depth network map created with draw.io. It's located in the Network Configuration directory.
 This diagram is by far the simplest way to view and understand how the entire network is laid out spatially.
+
+
+# Supplementary Materials
+
+## Tunneling Lab Credentials.txt
+This file contains all the usernames and passwords for every user found within this challenge.
+It can be found within the Credentials Directory
+
+## Gateway Apache Webserver
+This directory contains all the necessary html, png, and txt files for the gateway machine website.
+
+## Final Destination Apache Webserver
+This directory contains the one html file required for the final-destination machine website.
