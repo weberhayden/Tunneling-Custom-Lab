@@ -22,6 +22,10 @@ This diagram is by far the simplest way to view and understand how the entire ne
 This file contains all the usernames and passwords for every user found within this challenge.
 It can be found within the Credentials Directory
 
+## VMnet Config
+This file can be imported into VMware Workstation Pro to use the exact same network configuration utilized in this lab.
+Edit --> Virtual Network Editor --> Change Settings --> Import
+
 ## Gateway Apache Webserver
 This directory contains all the necessary html, png, and txt files for the gateway machine website.
 
